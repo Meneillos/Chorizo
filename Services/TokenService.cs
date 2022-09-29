@@ -11,12 +11,7 @@ namespace Chorizo.Services
 {
     public class TokenService : ITokenService
     {
-        private List<Token> _tokens;
-
-        public TokenService()
-        {
-            _tokens = new List<Token>();
-        }
+        private List<Token> tokenList = new();
 
         public Guid New(string address = "")
         {
@@ -25,7 +20,7 @@ namespace Chorizo.Services
                 Value = Guid.NewGuid(),
                 TokenAddress = address
             };
-            _tokens.Add(token);
+            tokenList.Add(token);
             return token.Value;
         }
 
@@ -33,13 +28,13 @@ namespace Chorizo.Services
         {
             (bool Success, List<Token> Tokens) patata = TupleTest();
             if (patata.Success) Debug.WriteLine($"{nameof(patata.Tokens)} = {patata.Tokens}");
-            System.Console.WriteLine(_tokens.ToJsonString());
-            return _tokens;
+            System.Console.WriteLine(tokenList.ToJsonString());
+            return tokenList;
         }
 
         private (bool, List<Token>) TupleTest()
         {
-            return (true, _tokens);
+            return (true, tokenList);
         }
     }
 }

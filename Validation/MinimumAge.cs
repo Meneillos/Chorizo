@@ -21,8 +21,8 @@ namespace Chorizo.Validation
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
             //Test to access another property of the object.
-            var property = validationContext.ObjectType.GetProperty("Name");
-            Debug.WriteLine(property!.GetValue(validationContext.ObjectInstance));
+            var propertyValue = validationContext.ObjectType.GetProperty("Name")!.GetValue(validationContext.ObjectInstance);
+            Debug.WriteLine(_age);
             
             if ((DateTime.Today - (DateTime)value!).Days < _age * 365) return new ValidationResult(GetErrorMessage());
             return ValidationResult.Success;
