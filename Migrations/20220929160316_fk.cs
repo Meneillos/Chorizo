@@ -5,25 +5,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Chorizo.Migrations
 {
-    public partial class initial : Migration
+    public partial class fk : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Enrollment",
-                columns: table => new
-                {
-                    EnrollmentId = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    SubjectId = table.Column<int>(type: "INTEGER", nullable: false),
-                    PersonId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Rol = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Enrollment", x => x.EnrollmentId);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Person",
                 columns: table => new
@@ -53,6 +38,43 @@ namespace Chorizo.Migrations
                 {
                     table.PrimaryKey("PK_Subject", x => x.SubjectId);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "Enrollment",
+                columns: table => new
+                {
+                    EnrollmentId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    SubjectId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PersonId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Rol = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Enrollment", x => x.EnrollmentId);
+                    table.ForeignKey(
+                        name: "FK_Enrollment_Person_PersonId",
+                        column: x => x.PersonId,
+                        principalTable: "Person",
+                        principalColumn: "PersonId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Enrollment_Subject_SubjectId",
+                        column: x => x.SubjectId,
+                        principalTable: "Subject",
+                        principalColumn: "SubjectId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Enrollment_PersonId",
+                table: "Enrollment",
+                column: "PersonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Enrollment_SubjectId",
+                table: "Enrollment",
+                column: "SubjectId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

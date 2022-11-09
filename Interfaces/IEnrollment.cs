@@ -14,6 +14,5 @@ namespace Chorizo.Interfaces
         public Enrollment? Get(int id);
         public bool Delete(int id);
         public bool Update(Enrollment enrollment);
-        public SubjectViewDTO GetSubjectView(int subjectId);
     }
 }

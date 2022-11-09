@@ -23,8 +23,10 @@ namespace Chorizo.Controllers
         {
             try
             {
+                // if (_enrollment.Get().Where(e => e.PersonId == enrollment.PersonId && e.SubjectId == enrollment.SubjectId).Any()) 
+                //     return BadRequest("Enrollment already exists.");
                 _enrollment.New(enrollment);
-                return Ok();
+                return NoContent();
             }
             catch (System.Exception)
             {

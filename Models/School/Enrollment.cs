@@ -18,10 +18,15 @@ namespace Chorizo.Models.School
 
         [Key]
         public int EnrollmentId { get; set; }
-        [Required]
+
         public int SubjectId { get; set; }
-        [Required]
+
         public int PersonId { get; set; }
+
+        public virtual Subject? Subject { get; set; }
+
+        public virtual Person? Person { get; set; }
+
         [Required]
         public RolType Rol { get; set; }
     }

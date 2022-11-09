@@ -13,7 +13,8 @@ namespace Chorizo.Services
         {
             CreateMap<Person, PersonDTO>().ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
                                           .ForMember(dest => dest.Surename, opt => opt.MapFrom(src => src.Surename));
-            CreateMap<Subject, SubjectDTO>().ForMember(dest => dest.Course, opt => opt.MapFrom(src => src.Course))
+            CreateMap<Subject, SubjectDTO>().ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.SubjectId))
+                                            .ForMember(dest => dest.Course, opt => opt.MapFrom(src => src.Course))
                                             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
                                             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name));
         }

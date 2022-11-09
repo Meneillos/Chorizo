@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chorizo.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    [Migration("20220927081945_initial")]
-    partial class initial
+    [Migration("20220929160316_fk")]
+    partial class fk
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -35,6 +35,10 @@ namespace Chorizo.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("EnrollmentId");
+
+                    b.HasIndex("PersonId");
+
+                    b.HasIndex("SubjectId");
 
                     b.ToTable("Enrollment");
                 });
@@ -80,6 +84,35 @@ namespace Chorizo.Migrations
                     b.HasKey("SubjectId");
 
                     b.ToTable("Subject");
+                });
+
+            modelBuilder.Entity("Chorizo.Models.School.Enrollment", b =>
+                {
+                    b.HasOne("Chorizo.Models.School.Person", "Person")
+                        .WithMany("Enrollments")
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Chorizo.Models.School.Subject", "Subject")
+                        .WithMany("Enrollments")
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Person");
+
+                    b.Navigation("Subject");
+                });
+
+            modelBuilder.Entity("Chorizo.Models.School.Person", b =>
+                {
+                    b.Navigation("Enrollments");
+                });
+
+            modelBuilder.Entity("Chorizo.Models.School.Subject", b =>
+                {
+                    b.Navigation("Enrollments");
                 });
 #pragma warning restore 612, 618
         }

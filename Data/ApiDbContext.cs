@@ -12,11 +12,15 @@ namespace Chorizo.Data
     {
         public ApiDbContext(DbContextOptions<ApiDbContext> options) : base(options)
         {
-            
         }
 
-        public DbSet<Subject> Subject => Set<Subject>();
-        public DbSet<Person> Person => Set<Person>();
-        public DbSet<Enrollment> Enrollment => Set<Enrollment>();
+        public DbSet<Subject> Subject { get; set; } = null!; //=> Set<Subject>();
+        public DbSet<Person> Person { get; set; } = null!;//=> Set<Person>();
+        public DbSet<Enrollment> Enrollment { get; set; } = null!;//=> Set<Enrollment>();
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            
+        }
     }
 }

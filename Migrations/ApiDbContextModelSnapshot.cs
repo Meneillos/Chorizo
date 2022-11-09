@@ -34,6 +34,10 @@ namespace Chorizo.Migrations
 
                     b.HasKey("EnrollmentId");
 
+                    b.HasIndex("PersonId");
+
+                    b.HasIndex("SubjectId");
+
                     b.ToTable("Enrollment");
                 });
 
@@ -78,6 +82,35 @@ namespace Chorizo.Migrations
                     b.HasKey("SubjectId");
 
                     b.ToTable("Subject");
+                });
+
+            modelBuilder.Entity("Chorizo.Models.School.Enrollment", b =>
+                {
+                    b.HasOne("Chorizo.Models.School.Person", "Person")
+                        .WithMany("Enrollments")
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Chorizo.Models.School.Subject", "Subject")
+                        .WithMany("Enrollments")
+                        .HasForeignKey("SubjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Person");
+
+                    b.Navigation("Subject");
+                });
+
+            modelBuilder.Entity("Chorizo.Models.School.Person", b =>
+                {
+                    b.Navigation("Enrollments");
+                });
+
+            modelBuilder.Entity("Chorizo.Models.School.Subject", b =>
+                {
+                    b.Navigation("Enrollments");
                 });
 #pragma warning restore 612, 618
         }

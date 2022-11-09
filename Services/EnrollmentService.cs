@@ -98,23 +98,5 @@ namespace Chorizo.Services
                 throw;
             }
         }
-
-        public SubjectViewDTO GetSubjectView(int subjectId)
-        {
-            var subject = _mapper.Map<SubjectDTO>(_context.Subject.Where(s => s.SubjectId == subjectId).FirstOrDefault());
-            var teachersIds = _context.Enrollment.Where(e => e.SubjectId == subjectId && e.Rol == Enrollment.RolType.Teacher)
-                                              .Select(e => e.SubjectId)
-                                              .ToArray();
-            List<PersonDTO> teacherList = new();
-            foreach (int teacherId in teachersIds)
-            {
-                teacherList.Add(_mapper.Map<PersonDTO>(_context.Person.Where(p => p.PersonId == teacherId).FirstOrDefault()!));
-            }
-            return new SubjectViewDTO()
-            {
-                Subject = subject,
-                Teacher = teacherList
-            };
-        }
     }
 }

@@ -50,11 +50,12 @@ namespace Chorizo.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Subject> GetSubject(int id)
+        public ActionResult<SubjectViewDTO> GetSubject(int id)
         {
             try
             {
-                Subject? subject = _subject.Get(id);
+                // Subject? subject = _subject.Get(id);
+                SubjectViewDTO? subject = _subject.GetSubjectView(id);
                 return subject != null ? Ok(subject) : BadRequest("Subject doesn't exist.");
             }
             catch (System.Exception)

@@ -37,39 +37,39 @@ namespace Chorizo.Services
             }
         }
 
-        public IEnumerable<SubjectViewDTO> GetAll(SubjectParameters parameters)
+        public IEnumerable<SubjectDTO> GetAll(SubjectParameters parameters)
         {
             try
             {
                 //We get the filtered subjects.
-                List<Subject> subjects = _context.Subject.Where(s =>
+                return _mapper.Map<IEnumerable<SubjectDTO>>(_context.Subject.Where(s =>
                     (parameters.Course != null ? s.Course == parameters.Course : true) &&
-                    (parameters.Name != null ? s.Name == parameters.Name : true)).ToList();
-                
-                //For each subject we get the subject DTO and the list of teachers as List<PersonDTO>.
-                List<SubjectViewDTO> subjectViewDTOs = new();
-                foreach (var subject in subjects)
-                {
-                    SubjectViewDTO subjectView = new();
-                    //Map from Subject to SubjectDTO.
-                    subjectView.Subject = _mapper.Map<SubjectDTO>(subject);
-                    //Get all teacher ids of the subject.
-                    int[] teachersIds = _context.Enrollment.Where(e => e.SubjectId == subject.SubjectId && e.Rol == Enrollment.RolType.Teacher)
-                                              .Select(e => e.SubjectId)
-                                              .ToArray();
-                    //For each teacher we get all the data that it's mapped to PersonDTO.
-                    foreach (int teacherId in teachersIds)
-                    {
-                        Person? teacher = _context.Person.Where(p => p.PersonId == teacherId).FirstOrDefault();
-                        if (teacher != null)
-                        {
-                            var teacherDto = _mapper.Map<PersonDTO>(teacher);
-                            subjectView.Teacher.Add(teacherDto);
-                        }
-                    }
-                    subjectViewDTOs.Add(subjectView);
-                }
-                return subjectViewDTOs;
+                    (parameters.Name != null ? s.Name == parameters.Name : true)).ToList());
+
+                // //For each subject we get the subject DTO and the list of teachers as List<PersonDTO>.
+                // List<SubjectViewDTO> subjectViewDTOs = new();
+                // foreach (var subject in subjects)
+                // {
+                //     SubjectViewDTO subjectView = new();
+                //     //Map from Subject to SubjectDTO.
+                //     subjectView.Subject = _mapper.Map<SubjectDTO>(subject);
+                //     //Get all teacher ids of the subject.
+                //     int[] teachersIds = _context.Enrollment.Where(e => e.SubjectId == subject.SubjectId && e.Rol == Enrollment.RolType.Teacher)
+                //                               .Select(e => e.SubjectId)
+                //                               .ToArray();
+                //     //For each teacher we get all the data that it's mapped to PersonDTO.
+                //     foreach (int teacherId in teachersIds)
+                //     {
+                //         Person? teacher = _context.Person.Where(p => p.PersonId == teacherId).FirstOrDefault();
+                //         if (teacher != null)
+                //         {
+                //             var teacherDto = _mapper.Map<PersonDTO>(teacher);
+                //             subjectView.Teachers.Add(teacherDto);
+                //         }
+                //     }
+                //     subjectViewDTOs.Add(subjectView);
+                // }
+                // return subjectViewDTOs;
             }
             catch (System.Exception ex)
             {
@@ -89,6 +89,37 @@ namespace Chorizo.Services
                 Log.Error(ex.ToString());
                 throw;
             }
+        }
+
+        public SubjectViewDTO GetSubjectView(int subjectId)
+        {
+            var subject = _mapper.Map<SubjectDTO>(_context.Subject.Where(s => s.SubjectId == subjectId).FirstOrDefault());
+            // var teachersIds = _context.Enrollment.Where(e => e.SubjectId == subjectId && e.Rol == Enrollment.RolType.Teacher)
+            //                                      .Select(e => e.SubjectId)
+            //                                      .ToArray();
+            List<PersonDTO> teachersList = new();
+            List<PersonDTO> studentsList = new();
+            _context.Enrollment.Where(e => e.SubjectId == subjectId)
+                               .Select(e => new { PersonID = e.PersonId, Rol = e.Rol })
+                               .ToList()
+                               .ForEach(x =>
+                               {
+                                   if (x.Rol == Enrollment.RolType.Teacher)
+                                   {
+                                        teachersList.Add(_mapper.Map<PersonDTO>(_context.Person.Where(p => p.PersonId == x.PersonID).First()));
+                                   }
+                                   else
+                                   {
+                                       studentsList.Add(_mapper.Map<PersonDTO>(_context.Person.Where(p => p.PersonId == x.PersonID).First()));
+                                   }
+                               });
+
+            return new SubjectViewDTO()
+            {
+                Subject = subject,
+                Teachers = teachersList,
+                Students = studentsList
+            };
         }
 
         public bool Delete(int id)
